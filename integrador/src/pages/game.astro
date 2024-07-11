@@ -1,0 +1,13 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Arkanoid from "../components/Arkanoid/Arkanoid.jsx";
+---
+<Layout title="GameMind | Arkanoid">
+  <Header />
+  <main class="flex flex-col items-center justify-center h-full w-full">
+    <div class="w-full max-w-4xl h-full">
+      <Arkanoid client:load />
+    </div>
+  </main>
+</Layout>
