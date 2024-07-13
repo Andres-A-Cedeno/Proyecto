@@ -1,0 +1,22 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Astro/Header.astro";
+import { PendingTasksForm } from "../components/React/Forms/PendingTasksForm.jsx";
+import { TaskList } from "../components/React/Forms/TaskList.jsx";
+---
+
+<Layout title="GameMind | Registra tus tareas pendientes">
+  <Header />
+  <main
+    class="flex flex-col md:flex-row h-screen justify-center items-center w-full"
+  >
+    <div
+      class="content-center w-1/2 border-r-[1px] border-neutral-300 min-h-screen px-6"
+    >
+      <PendingTasksForm />
+    </div>
+    <div class="flex justify-center w-1/2">
+      <TaskList />
+    </div>
+  </main>
+</Layout>

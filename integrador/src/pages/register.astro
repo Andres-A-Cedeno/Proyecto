@@ -1,0 +1,20 @@
+---
+import Header from "../components/Astro/Header.astro";
+import { RegisterForm } from "../components/React/Forms/RegisterForm";
+import Layout from "../layouts/Layout.astro";
+import Info from "../components/Astro/Info.astro";
+---
+
+<Layout title="GameMind | Registrarse">
+  <Header />
+  <main
+    class="flex flex-col-reverse items-center justify-center w-full md:flex-row"
+  >
+    <div
+      class="flex w-1/2 px-8 md:px-10 min-h-screen bg-violet-950 items-center justify-center"
+    >
+      <RegisterForm />
+    </div>
+    <Info />
+  </main>
+</Layout>

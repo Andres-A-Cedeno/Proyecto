@@ -1,0 +1,11 @@
+.arkanoid-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .arkanoid-canvas {
+    display: block;
+    background: url('/Arkanoid/images/bkg.png') repeat;
+    width: 100%;
+    height: 100%;
+  }
