@@ -6,7 +6,7 @@
 export function RegisterForm() {
   return (
     <div>
-      <div className="w-full flex flex-col max-w-md md:max-w-xl  md:h-[44rem] p-7 md:p-9 space-y-4 md:space-y-6 bg-white rounded-lg shadow-md justify-center">
+      <div className="w-full flex flex-col max-w-md md:max-w-xl  md:h-auto p-7 md:p-9 space-y-4 md:space-y-6 bg-white rounded-lg shadow-md justify-center">
         <h2 className="text-4xl font-bold text-start">Registrate</h2>
         <form className="space-y-1.5 md:space-y-2 ">
           <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-2">
