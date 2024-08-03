@@ -1,5 +1,3 @@
-// models/userModel.js
-
 import supabase from "../config/supabaseClient.js";
 
 // Función para obtener todos los usuarios
@@ -84,6 +82,21 @@ export const updateUser = async (id, updates) => {
 // Función para eliminar un usuario
 export const deleteUser = async (id) => {
   const { data, error } = await supabase.from("usuarios").delete().eq("id", id);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+// Función para obtener un usuario por correo electrónico
+export const getUserByEmail = async (email) => {
+  const { data, error } = await supabase
+    .from("usuarios")
+    .select("*")
+    .eq("email", email)
+    .single();
 
   if (error) {
     throw error;

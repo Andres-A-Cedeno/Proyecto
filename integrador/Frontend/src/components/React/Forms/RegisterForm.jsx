@@ -20,7 +20,7 @@ export function RegisterForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:4322/users", {
+      const response = await fetch("http://localhost:4321/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

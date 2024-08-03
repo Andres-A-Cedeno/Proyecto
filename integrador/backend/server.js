@@ -1,13 +1,19 @@
 import express from "express";
-import cors from "cors"; // Importacion de cors
-import supabase from "./config/supabaseClient.js"; //-> Al trabajar con modulo es importante importar con la extension .js
+import cors from "cors"; 
+import userRoutes from "./routes/userRoutes.js"; // Importando rutas de usuario
+//import authRoutes from "./routes/authRoutes.js"; // Importando rutas de autenticación
 
-const app = express(); //-> Crear una instancia de Express
-const port = process.env.PORT ?? 4322; //-> Se define por variable de entorno o el puerto 4321
+const app = express(); 
+const port = process.env.PORT ?? 4321; 
 
-app.use(cors()); //-> Habilitar CORS
+app.use(cors());
 app.use(express.json());
+
+// Usar rutas de usuario
+app.use("/api", userRoutes);
+// Usar rutas de autenticación
+//app.use("/api", authRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
-}); // -> Diciendo que escuche el servidor en el puerto que declaramos en la variable de entorno o el puerto 4321
+});
