@@ -5,9 +5,9 @@ import * as userController from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.get("/users", userController.getAllUsers);
+router.get("/users", userController.getAllUsers); //RESTACATA TODOS LOS USUARIOS
 router.get("/users/:id", userController.getUserById);
-router.post("/users", userController.createUser);
+router.post("/new_users", userController.createUser); //CREA UN NUEVO USUARIO
 router.put("/users/:id", userController.updateUser);
 router.delete("/users/:id", userController.deleteUser);
 
