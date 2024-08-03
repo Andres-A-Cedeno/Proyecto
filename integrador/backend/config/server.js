@@ -6,7 +6,7 @@ import supabase from "./supabaseClient.js";
 
 
 const app = express(); //-> Crear una instancia de Express
-const port = process.env.PORT ?? 4321; //-> Se define por variable de entorno o el puerto 4321
+const port = process.env.PORT || 4321; //-> Se define por variable de entorno o el puerto 4321
 
 app.use(cors()); //-> Habilitar CORS
 app.use(express.json());
