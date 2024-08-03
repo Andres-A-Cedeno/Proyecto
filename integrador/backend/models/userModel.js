@@ -1,10 +1,24 @@
 // models/userModel.js
 
-import supabase from "../supabaseClient.js";
+import supabase from "../config/supabaseClient.js";
 
 // Función para obtener todos los usuarios
 export const getAllUsers = async () => {
-  const { data, error } = await supabase.from("Users").select("*");
+  const { data, error } = await supabase.from("usuarios").select(`
+    id,
+    nombre,
+    apellido,
+    alias,
+    genero,
+    email,
+    contraseña,
+    perfil_id,
+    perfiles (
+      id,
+      tipo,
+      descripcion
+    )
+  `);
 
   if (error) {
     throw error;
@@ -16,8 +30,22 @@ export const getAllUsers = async () => {
 // Función para obtener un usuario por ID
 export const getUserById = async (id) => {
   const { data, error } = await supabase
-    .from("Users")
-    .select("*")
+    .from("usuarios")
+    .select(`
+      id,
+      nombre,
+      apellido,
+      alias,
+      genero,
+      email,
+      contraseña,
+      perfil_id,
+      perfiles (
+        id,
+        tipo,
+        descripcion
+      )
+    `)
     .eq("id", id)
     .single();
 
@@ -30,7 +58,7 @@ export const getUserById = async (id) => {
 
 // Función para crear un nuevo usuario
 export const createUser = async (user) => {
-  const { data, error } = await supabase.from("Users").insert([user]);
+  const { data, error } = await supabase.from("usuarios").insert([user]);
 
   if (error) {
     throw error;
@@ -42,7 +70,7 @@ export const createUser = async (user) => {
 // Función para actualizar un usuario existente
 export const updateUser = async (id, updates) => {
   const { data, error } = await supabase
-    .from("Users")
+    .from("usuarios")
     .update(updates)
     .eq("id", id);
 
@@ -55,7 +83,7 @@ export const updateUser = async (id, updates) => {
 
 // Función para eliminar un usuario
 export const deleteUser = async (id) => {
-  const { data, error } = await supabase.from("Users").delete().eq("id", id);
+  const { data, error } = await supabase.from("usuarios").delete().eq("id", id);
 
   if (error) {
     throw error;

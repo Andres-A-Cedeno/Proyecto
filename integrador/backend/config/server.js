@@ -1,48 +1,40 @@
 import express from "express";
-import cors from "cors"; // Importacion de cors
-//import supabase from "./supabaseClient.js"; //-> Al trabajar con modulo es importante importar con la extension .js
+import cors from "cors";
+import dotenv from "dotenv";
 import supabase from "./supabaseClient.js";
+import userRoutes from "../routes/userRoutes.js"; // Asegúrate de la ruta correcta
+import profileRoutes from "../routes/profileRoutes.js"; // Asumiendo que tienes rutas de perfil
 
+// Cargar variables de entorno
+dotenv.config();
 
+const app = express();
+const port = process.env.PORT || 4321;
 
-const app = express(); //-> Crear una instancia de Express
-const port = process.env.PORT || 4321; //-> Se define por variable de entorno o el puerto 4321
-
-app.use(cors()); //-> Habilitar CORS
+app.use(cors());
 app.use(express.json());
 
-//registar a un usuario en la base datos
-app.post("/api/register", async (req, res) => {
-  try {
-  } catch (error) {}
-});
+// Utiliza las rutas importadas
+app.use("/api", userRoutes); 
+app.use("/api", profileRoutes); 
 
-//Para que el usuario se pueda loguear sin problemas
-app.post("/api/login", async (req, res) => {
+// Ruta de prueba de conexión
+app.get("/api/test-connection", async (req, res) => {
   try {
-    const { data, error } = await supabase.from("Users").select("*");
-    if (error) {
-      throw error;
-    }
-    res.json(data);
+    const { data, error } = await supabase.from("perfiles").select("*").limit(1);
+    if (error) throw error;
+    res.json({ message: "Connection successful", data });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Connection failed", error: error.message });
   }
 });
 
-/*
-app.get("/api/data", async (req, res) => {
-  try {
-    const { data, error } = await supabase.from("Users").select("*");
-    if (error) {
-      throw error;
-    }
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});*/
+// Middleware de manejo de errores global
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
-}); // -> Diciendo que escuche el servidor en el puerto que declaramos en la variable de entorno o el puerto 4321
+});

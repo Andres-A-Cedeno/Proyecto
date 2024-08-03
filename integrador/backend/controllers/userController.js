@@ -41,21 +41,28 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
+  console.log('Datos recibidos para actualizar:', updates); // Log para ver los datos recibidos
+
   try {
     const updatedUser = await userModel.updateUser(id, updates);
     res.json(updatedUser);
   } catch (error) {
+    console.error('Error al actualizar usuario:', error.message); // Log para ver el error específico
     res.status(500).json({ error: error.message });
   }
 };
 
 // Controlador para eliminar un usuario
+import * as userModel from "../models/userModel.js";
+
+// Controlador para eliminar un usuario
 export const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
-    await userModel.deleteUser(id);
+    await userModel.deleteUser(parseInt(id));
     res.status(204).send();
   } catch (error) {
+    console.error('Error al eliminar usuario:', error.message); // Log para ver el error específico
     res.status(500).json({ error: error.message });
   }
 };
