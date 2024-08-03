@@ -1,6 +1,6 @@
 // models/userModel.js
 
-import supabase from "../supabaseClient.js";
+import supabase from "../config/supabaseClient.js";
 
 // Función para obtener todos los usuarios
 export const getAllUsers = async () => {
