@@ -23,7 +23,7 @@ export function PendingTasksForm() {
     console.log(formData); 
   };
   return (
-    <div className=" p-4 rounded shadow-inner border border-purple-900">
+    <div className=" p-4">
       <div className=" py-4 px-6 border rounded shadow">
         <h2 className="text-lg font-bold">Cuentame $NombreUsr</h2>
         <h2 className="font-extralight">¿Tienes tareas pendientes hoy?</h2>
