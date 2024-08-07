@@ -15,26 +15,24 @@ export function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      const response = await fetch("http://localhost:4321/api/login", {
+      const response = await fetch("http://localhost:4322/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al iniciar sesión");
       }
-
+  
       const data = await response.json();
       console.log("Inicio de sesión exitoso:", data);
-      // Almacenar el token en localStorage o manejar la autenticación de otra manera
-      localStorage.setItem("token", data.token);
-      // Redirigir al usuario a la página de tareas
+      localStorage.setItem("token", data.token); // Almacena el token en localStorage
       window.location.href = "/tasks"; // Redirección del navegador
     } catch (error) {
       console.error("Error:", error);
