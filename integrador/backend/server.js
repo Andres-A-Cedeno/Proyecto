@@ -27,9 +27,6 @@ async function connect() {
 
 connect().catch(console.error);
 */
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
 app.use("/api", router); // Usar las rutas definidas en userRoutes.js
 
