@@ -7,10 +7,13 @@ export const getAllUsers = async () => {
     nombre,
     apellido,
     alias,
-    genero,
     email,
     contrasena,
     perfil_id,
+    genero_id,
+    generos (genero_id, descripcion_genero
+      
+    ),
     perfiles (
       id,
       tipo,
@@ -29,7 +32,8 @@ export const getAllUsers = async () => {
 export const getUserById = async (id) => {
   const { data, error } = await supabase
     .from("usuarios")
-    .select(`
+    .select(
+      `
       id,
       nombre,
       apellido,
@@ -43,7 +47,8 @@ export const getUserById = async (id) => {
         tipo,
         descripcion
       )
-    `)
+    `
+    )
     .eq("id", id)
     .single();
 
@@ -56,37 +61,45 @@ export const getUserById = async (id) => {
 
 // Función para crear un nuevo usuario con contraseña hasheada
 export const createUser = async (user) => {
-  const { nombre, apellido, alias, genero, email, contrasena, perfil_id } = user;
+  const { nombre, apellido, alias, genero_id, email, contrasena, perfil_id } =
+    user;
+
+  console.log(user);
 
   // Llamar a la función RPC para hashear la contraseña
-  const { data: hashedPassword, error: hashError } = await supabase.rpc("hash_password", {
-    password: contrasena,
-  });
+  const { data: hashedPassword, error: hashError } = await supabase.rpc(
+    "hash_password",
+    {
+      password: contrasena,
+    }
+  );
+  console.log("Conrtrasena hasheada", hashedPassword);
 
   if (hashError) {
     throw hashError;
   }
 
   // Insertar el nuevo usuario en la tabla 'usuarios'
-  const { data: newUser, error: insertError } = await supabase
+  const { data, error: insertError } = await supabase
     .from("usuarios")
     .insert([
       {
         nombre,
         apellido,
         alias,
-        genero,
+        genero_id,
         email,
         contrasena: hashedPassword,
         perfil_id,
       },
-    ]);
+    ])
+    .single();
 
   if (insertError) {
     throw insertError;
   }
-
-  return newUser;
+  console.log("Usuario insertado correctamente:", data);
+  return data;
 };
 
 // Función para actualizar un usuario existente

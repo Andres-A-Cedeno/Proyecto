@@ -1,26 +1,51 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export function RegisterForm() {
   const [formData, setFormData] = useState({
     nombre: "",
     apellido: "",
     alias: "",
-    genero: "",
     email: "",
     contraseña: "",
-    perfil_id: 2,
+    perfil_id: 2, //siempre va a ser cliente
+    genero_id: "",
   });
 
+  const [generos, setGeneros] = useState([]);
+
+  useEffect(() => {
+    async function fetchGeneros() {
+      try {
+        const response = await fetch("http://localhost:4322/api/genres");
+        if (!response.ok) {
+          throw new Error("Error al obtener la lista de géneros");
+        }
+        const data = await response.json();
+        setGeneros(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    fetchGeneros();
+  }, []);
+
   const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
+    const { name, value } = e.target;
+    const convertedValue = name === "genero_id" ? parseInt(value, 10) : value;
+    setFormData({
+      ...formData, //Copia el objeto formData
+      [name]: convertedValue, //Asigna el nuevo valor
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(formData);
+    /*
     try {
-      const response = await fetch("http://localhost:4322/api/new_users", { // Cambia el puerto al correcto (4322 en tu backend)
+      const response = await fetch("http://localhost:4322/api/new_users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,8 +63,7 @@ export function RegisterForm() {
       window.location.href = "/login";
     } catch (error) {
       console.error("Error:", error);
-      // Manejar el error en la creación del usuario
-    }
+    }*/
   };
 
   return (
@@ -48,10 +72,15 @@ export function RegisterForm() {
       <form className="space-y-1.5 md:space-y-2" onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-2">
           <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label htmlFor="nombre" className="text-sm md:text.base text-neutral-600">Nombre</label>
+            <label
+              htmlFor="nombre"
+              className="text-sm md:text.base text-neutral-600"
+            >
+              Nombre
+            </label>
             <input
               type="text"
-              id="nombre"
+              name="nombre"
               placeholder="Ingresa su nombre"
               className="w-full bg-inherit text-sm md:text-base focus:outline-none focus:text-neutral-600 text-neutral-400"
               value={formData.nombre}
@@ -59,9 +88,11 @@ export function RegisterForm() {
             />
           </div>
           <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label htmlFor="apellido" className="text-neutral-600">Apellido</label>
+            <label htmlFor="apellido" className="text-neutral-600">
+              Apellido
+            </label>
             <input
-              id="apellido"
+              name="apellido"
               placeholder="Ingrese su apellido"
               className="w-full bg-inherit text-sm md:text-base focus:outline-none focus:text-neutral-600 text-neutral-400"
               value={formData.apellido}
@@ -71,9 +102,11 @@ export function RegisterForm() {
         </div>
         <div className="grid grid-cols-2 gap-1.5 md:text-base md:gap-2">
           <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label htmlFor="alias" className="text-neutral-600">Nombre de usuario</label>
+            <label htmlFor="alias" className="text-neutral-600">
+              Nombre de usuario
+            </label>
             <input
-              id="alias"
+              name="alias"
               placeholder="Ingrese su nombre de usuario"
               className="w-full focus:outline-none focus:text-neutral-600 text-neutral-400 md:text-base text-sm bg-inherit"
               value={formData.alias}
@@ -81,24 +114,34 @@ export function RegisterForm() {
             />
           </div>
           <div className="flex flex-col bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label htmlFor="genero" className="text-neutral-600">Género</label>
+            <label htmlFor="genero" className="text-neutral-600">
+              Género
+            </label>
             <select
-              name="genero"
-              id="genero"
+              name="genero_id"
               className="bg-inherit text-neutral-400 focus:outline-none focus:text-neutral-600 text-sm md:text-base -ml-1"
-              value={formData.genero}
+              value={formData.genero_id}
               onChange={handleChange}
             >
-              <option value="">Género que mejor te defina</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Femenino">Femenino</option>
+              <option disabled>escoga su genero</option>
+              {generos.map((genero, index) => (
+                <option
+                  key={index}
+                  value={genero.genero_id}
+                  className="transition hover:bg-neutral-200"
+                >
+                  {genero.descripcion_genero}
+                </option>
+              ))}
             </select>
           </div>
         </div>
         <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-          <label htmlFor="email" className="text-neutral-600">Email</label>
+          <label htmlFor="email" className="text-neutral-600">
+            Email
+          </label>
           <input
-            id="email"
+            name="email"
             placeholder="example.email@gmail.com"
             type="email"
             className="w-full text-sm md:text-base focus:text-neutral-600 text-neutral-400 focus:outline-none bg-inherit"
@@ -107,11 +150,14 @@ export function RegisterForm() {
           />
         </div>
         <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-          <label htmlFor="contraseña" className="text-neutral-600">Contraseña</label>
+          <label htmlFor="contraseña" className="text-neutral-600">
+            Contraseña
+          </label>
           <input
-            id="contraseña"
+            name="contraseña"
             placeholder="Introduce al menos 8+ caracteres"
             type="password"
+            autoComplete="off"
             className="bg-inherit w-full text-sm md:text-base focus:text-neutral-600 text-neutral-400 focus:outline-none"
             value={formData.contraseña}
             onChange={handleChange}
@@ -125,8 +171,10 @@ export function RegisterForm() {
         </button>
       </form>
       <p className="text-center flex flex-col md:flex-row justify-center gap-1">
-        ¿Ya tienes una cuenta?{" "}
-        <a href="/login" className="text-blue-600 hover:underline">Inicia sesión</a>
+        ¿Ya tienes una cuenta?
+        <a href="/login" className="text-blue-600 hover:underline">
+          Inicia sesión
+        </a>
       </p>
     </div>
   );
