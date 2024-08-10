@@ -12,7 +12,9 @@ export function RegisterForm() {
   });
 
   const [generos, setGeneros] = useState([]);
-  const [showModal, setShowModal] = useState(false); // Estado para controlar el modal
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para controlar el modal de éxito
+  const [errorMessage, setErrorMessage] = useState(""); // Estado para controlar el mensaje de error
+  const [showErrorModal, setShowErrorModal] = useState(false); // Estado para controlar el modal de error
 
   useEffect(() => {
     async function fetchGeneros() {
@@ -43,14 +45,14 @@ export function RegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Asignar "Masculino" (genero_id = 1) si genero_id está vacío
     if (!formData.genero_id) {
       formData.genero_id = 1; // "Masculino" por defecto
     }
-  
+
     console.log(formData);
-  
+
     try {
       const response = await fetch("http://localhost:4322/api/new_users", {
         method: "POST",
@@ -59,23 +61,29 @@ export function RegisterForm() {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Error al crear el usuario");
+        throw new Error(errorData.error || "Error al crear el usuario");
       }
-  
+
       const data = await response.json();
       console.log("Usuario creado:", data);
-      setShowModal(true); // Mostrar el modal al crear el usuario correctamente
+      setShowSuccessModal(true); // Mostrar el modal de éxito al crear el usuario correctamente
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error.message);
+      setErrorMessage(error.message); // Guardar el mensaje de error
+      setShowErrorModal(true); // Mostrar el modal de error
     }
   };
 
   const handleModalAccept = () => {
-    setShowModal(false); // Cerrar el modal
+    setShowSuccessModal(false); // Cerrar el modal de éxito
     window.location.href = "/login"; // Redirigir a la página de login
+  };
+
+  const handleErrorModalClose = () => {
+    setShowErrorModal(false); // Cerrar el modal de error
   };
 
   return (
@@ -178,8 +186,8 @@ export function RegisterForm() {
         </button>
       </form>
       
-      {/* Modal de confirmación */}
-      {showModal && (
+      {/* Modal de confirmación de éxito */}
+      {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-md text-center">
             <h3 className="text-2xl mb-4">Usuario creado correctamente</h3>
@@ -188,6 +196,22 @@ export function RegisterForm() {
               className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded"
             >
               Aceptar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de error */}
+      {showErrorModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <h3 className="text-2xl mb-4 text-red-600">Error</h3>
+            <p className="mb-4">{errorMessage}</p>
+            <button
+              onClick={handleErrorModalClose}
+              className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+            >
+              Cerrar
             </button>
           </div>
         </div>

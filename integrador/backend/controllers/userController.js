@@ -74,6 +74,14 @@ export const createUser = async (req, res) => {
       .insert([{ nombre, apellido, alias, genero_id, email, contrasena: hashedPassword, perfil_id: 2 }]);
 
     if (insertError) {
+      // Verificar si el error es por duplicado de email o alias
+      if (insertError.message.includes('usuarios_email_key')) {
+        return res.status(400).json({ error: "El correo electrónico ya está en uso." });
+      }
+      if (insertError.message.includes('usuarios_alias_key')) {
+        return res.status(400).json({ error: "El nombre de usuario ya está en uso." });
+      }
+
       console.error("Error en la inserción de usuario:", insertError.message);
       throw new Error(insertError.message);
     }
