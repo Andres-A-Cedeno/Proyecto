@@ -19,8 +19,10 @@ export function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("Datos del formulario:", formData); // Verifica los datos del formulario
+
     try {
-      const response = await fetch("http://localhost:4321/api/new_users", {
+      const response = await fetch("http://localhost:4322/api/new_users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,11 +36,9 @@ export function RegisterForm() {
 
       const data = await response.json();
       console.log("Usuario creado:", data);
-      // Redirigir al usuario a la página de inicio de sesión
-      window.location.href = "/login"; // Redirección del navegador
+      window.location.href = "/login";
     } catch (error) {
       console.error("Error:", error);
-      // Manejar el error en la creación del usuario
     }
   };
 
@@ -46,7 +46,12 @@ export function RegisterForm() {
     <div>
       <div className="w-full flex flex-col max-w-md md:max-w-xl  md:h-auto p-7 md:p-9 space-y-4 md:space-y-6 bg-white rounded-lg shadow-md justify-center">
         <h2 className="text-4xl font-bold text-start">Registrate</h2>
-        <form className="space-y-1.5 md:space-y-2" onSubmit={handleSubmit}>
+        <form
+          className="space-y-1.5 md:space-y-2"
+          //onSubmit={handleSubmit}
+          //method="POST"
+          //action="http://localhost:4322/api/new_users"
+        >
           <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-2">
             <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
               <label
@@ -58,6 +63,8 @@ export function RegisterForm() {
               <input
                 type="text"
                 id="nombre"
+                //value={nombre}
+                name="nombre"
                 placeholder="Ingresa su nombre"
                 className="w-full bg-inherit text-sm md:text-base focus:outline-none focus:text-neutral-600 text-neutral-400"
                 value={formData.nombre}
@@ -69,6 +76,7 @@ export function RegisterForm() {
                 Apellido
               </label>
               <input
+                name="apellido"
                 id="apellido"
                 placeholder="Ingrese su apellido"
                 className="w-full bg-inherit text-sm md:text-base focus:outline-none focus:text-neutral-600 text-neutral-400"
