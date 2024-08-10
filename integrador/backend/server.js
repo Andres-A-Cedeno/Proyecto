@@ -9,8 +9,7 @@ import dotenv from "dotenv";
 dotenv.config(); // Cargar variables de entorno
 
 const app = express();
-const PORT = process.env.PORT || 4321;
-const app = express();
+
 const port = process.env.PORT || 4322; // Definir puerto desde variable de entorno o usar 4322
 
 app.use(bodyParser.json());
