@@ -1,5 +1,7 @@
 ---
 import Header from "../components/Astro/Header.astro";
+//import GenresList from "../components/React/Forms/RegisterForm";
+//import GenresList from "../components/Astro/GenresList.astro";
 import { RegisterForm } from "../components/React/Forms/RegisterForm";
 import Layout from "../layouts/Layout.astro";
 import Info from "../components/Astro/Info.astro";
@@ -13,7 +15,9 @@ import Info from "../components/Astro/Info.astro";
     <div
       class="flex w-1/2 px-10 py-8 md:px-10 min-h-screen bg-violet-950 items-center justify-center"
     >
-      <RegisterForm />
+      <RegisterForm client:load />
+      <!-- @ts-ignore 
+      <GenresList client:only="react" />-->
     </div>
     <Info />
   </main>
