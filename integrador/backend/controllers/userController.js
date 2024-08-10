@@ -28,12 +28,20 @@ export const getUserById = async (req, res) => {
 
 // Controlador para crear un nuevo usuario
 export const createUser = async (req, res) => {
-  const user = {...req.body, perfil_id: 2};
-  console.log("Datos recibidos para crear usuario:", user);
+  console.log("Datos recibidos para crear usuario:", req.body);
+
+  if (!req.body || Object.keys(req.body).length === 0) {
+    return res
+      .status(400)
+      .json({ error: "No se recibieron datos del formulario" });
+  }
+
+  const user = { ...req.body, perfil_id: 2 };
+
   try {
     const newUser = await userModel.createUser(user);
     res.status(201).json(newUser);
-    console.log("Usuario Creado correctamente");
+    console.log("Usuario creado correctamente");
   } catch (error) {
     console.error("Error al crear usuario:", error.message);
     res.status(500).json({ error: error.message });

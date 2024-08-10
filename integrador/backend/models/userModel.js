@@ -29,7 +29,8 @@ export const getAllUsers = async () => {
 export const getUserById = async (id) => {
   const { data, error } = await supabase
     .from("usuarios")
-    .select(`
+    .select(
+      `
       id,
       nombre,
       apellido,
@@ -43,7 +44,8 @@ export const getUserById = async (id) => {
         tipo,
         descripcion
       )
-    `)
+    `
+    )
     .eq("id", id)
     .single();
 

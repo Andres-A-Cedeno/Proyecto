@@ -1,15 +1,24 @@
 import express from "express";
-import cors from "cors"; // Importacion de cors
-import router from "./routes/userRoutes.js";
+import bodyParser from "body-parser";
+import userRoutes from "./routes/userRoutes.js";
+import mongoose from "mongoose";
 
-const app = express(); //-> Crear una instancia de Express
-const port = process.env.PORT ?? 4321; //-> Se define por variable de entorno o el puerto 4321
+const app = express();
+const PORT = process.env.PORT || 4321;
 
-app.use(cors()); //-> Habilitar CORS
-app.use(express.json());
+app.use(bodyParser.json());
 
-app.use("/api", router);
+app.use("/api", userRoutes);
 
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
-}); // -> Diciendo que escuche el servidor en el puerto que declaramos en la variable de entorno o el puerto 4321
+/*Conexion con mongo*/
+/*
+async function connect() {
+  await mongoose.connect(process.env.MONGODB_CONECCTION_STRING);
+  console.log("Connected to MongoDB");
+}
+
+connect().catch(console.error);
+*/
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
