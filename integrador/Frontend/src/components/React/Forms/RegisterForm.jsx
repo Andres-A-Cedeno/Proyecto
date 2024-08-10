@@ -7,11 +7,12 @@ export function RegisterForm() {
     alias: "",
     email: "",
     contraseña: "",
-    perfil_id: 2, //siempre va a ser cliente
+    perfil_id: 2, // siempre va a ser usuario normal
     genero_id: "",
   });
 
   const [generos, setGeneros] = useState([]);
+  const [showModal, setShowModal] = useState(false); // Estado para controlar el modal
 
   useEffect(() => {
     async function fetchGeneros() {
@@ -35,15 +36,21 @@ export function RegisterForm() {
     const { name, value } = e.target;
     const convertedValue = name === "genero_id" ? parseInt(value, 10) : value;
     setFormData({
-      ...formData, //Copia el objeto formData
-      [name]: convertedValue, //Asigna el nuevo valor
+      ...formData, // Copia el objeto formData
+      [name]: convertedValue, // Asigna el nuevo valor
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Asignar "Masculino" (genero_id = 1) si genero_id está vacío
+    if (!formData.genero_id) {
+      formData.genero_id = 1; // "Masculino" por defecto
+    }
+  
     console.log(formData);
-    /*
+  
     try {
       const response = await fetch("http://localhost:4322/api/new_users", {
         method: "POST",
@@ -52,30 +59,33 @@ export function RegisterForm() {
         },
         body: JSON.stringify(formData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al crear el usuario");
       }
-
+  
       const data = await response.json();
       console.log("Usuario creado:", data);
-      window.location.href = "/login";
+      setShowModal(true); // Mostrar el modal al crear el usuario correctamente
     } catch (error) {
       console.error("Error:", error);
-    }*/
+    }
+  };
+
+  const handleModalAccept = () => {
+    setShowModal(false); // Cerrar el modal
+    window.location.href = "/login"; // Redirigir a la página de login
   };
 
   return (
     <div className="w-full flex flex-col max-w-md md:max-w-xl md:h-auto p-7 md:p-9 space-y-4 md:space-y-6 bg-white rounded-lg shadow-md justify-center">
       <h2 className="text-4xl font-bold text-start">Regístrate</h2>
       <form className="space-y-1.5 md:space-y-2" onSubmit={handleSubmit}>
+        {/* El resto del formulario aquí */}
         <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-2">
           <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label
-              htmlFor="nombre"
-              className="text-sm md:text.base text-neutral-600"
-            >
+            <label htmlFor="nombre" className="text-sm md:text.base text-neutral-600">
               Nombre
             </label>
             <input
@@ -122,14 +132,11 @@ export function RegisterForm() {
               className="bg-inherit text-neutral-400 focus:outline-none focus:text-neutral-600 text-sm md:text-base -ml-1"
               value={formData.genero_id}
               onChange={handleChange}
+              required
             >
-              <option disabled>escoga su genero</option>
-              {generos.map((genero, index) => (
-                <option
-                  key={index}
-                  value={genero.genero_id}
-                  className="transition hover:bg-neutral-200"
-                >
+              <option value="" disabled>Escoge tu género</option>
+              {generos.map((genero) => (
+                <option key={genero.genero_id} value={genero.genero_id}>
                   {genero.descripcion_genero}
                 </option>
               ))}
@@ -170,6 +177,22 @@ export function RegisterForm() {
           Registrarse
         </button>
       </form>
+      
+      {/* Modal de confirmación */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <h3 className="text-2xl mb-4">Usuario creado correctamente</h3>
+            <button
+              onClick={handleModalAccept}
+              className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      )}
+
       <p className="text-center flex flex-col md:flex-row justify-center gap-1">
         ¿Ya tienes una cuenta?
         <a href="/login" className="text-blue-600 hover:underline">
