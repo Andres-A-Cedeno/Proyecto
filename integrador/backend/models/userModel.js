@@ -29,8 +29,7 @@ export const getAllUsers = async () => {
 export const getUserById = async (id) => {
   const { data, error } = await supabase
     .from("usuarios")
-    .select(
-      `
+    .select(`
       id,
       nombre,
       apellido,
@@ -44,8 +43,7 @@ export const getUserById = async (id) => {
         tipo,
         descripcion
       )
-    `
-    )
+    `)
     .eq("id", id)
     .single();
 
@@ -58,16 +56,12 @@ export const getUserById = async (id) => {
 
 // Función para crear un nuevo usuario con contraseña hasheada
 export const createUser = async (user) => {
-  const { nombre, apellido, alias, genero, email, contrasena, perfil_id } =
-    user;
+  const { nombre, apellido, alias, genero, email, contrasena, perfil_id } = user;
 
   // Llamar a la función RPC para hashear la contraseña
-  const { data: hashedPassword, error: hashError } = await supabase.rpc(
-    "hash_password",
-    {
-      password: contrasena,
-    }
-  );
+  const { data: hashedPassword, error: hashError } = await supabase.rpc("hash_password", {
+    password: contrasena,
+  });
 
   if (hashError) {
     throw hashError;
