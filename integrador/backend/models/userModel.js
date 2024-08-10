@@ -9,7 +9,7 @@ export const getAllUsers = async () => {
     alias,
     genero,
     email,
-    contraseña,
+    contrasena,
     perfil_id,
     perfiles (
       id,
@@ -37,7 +37,7 @@ export const getUserById = async (id) => {
       alias,
       genero,
       email,
-      contraseña,
+      contrasena,
       perfil_id,
       perfiles (
         id,
@@ -56,15 +56,43 @@ export const getUserById = async (id) => {
   return data;
 };
 
-// Función para crear un nuevo usuario
+// Función para crear un nuevo usuario con contraseña hasheada
 export const createUser = async (user) => {
-  const { data, error } = await supabase.from("usuarios").insert([user]);
+  const { nombre, apellido, alias, genero, email, contrasena, perfil_id } =
+    user;
 
-  if (error) {
-    throw error;
+  // Llamar a la función RPC para hashear la contraseña
+  const { data: hashedPassword, error: hashError } = await supabase.rpc(
+    "hash_password",
+    {
+      password: contrasena,
+    }
+  );
+
+  if (hashError) {
+    throw hashError;
   }
 
-  return data;
+  // Insertar el nuevo usuario en la tabla 'usuarios'
+  const { data: newUser, error: insertError } = await supabase
+    .from("usuarios")
+    .insert([
+      {
+        nombre,
+        apellido,
+        alias,
+        genero,
+        email,
+        contrasena: hashedPassword,
+        perfil_id,
+      },
+    ]);
+
+  if (insertError) {
+    throw insertError;
+  }
+
+  return newUser;
 };
 
 // Función para actualizar un usuario existente
@@ -105,4 +133,32 @@ export const getUserByEmail = async (email) => {
   }
 
   return data;
+};
+
+// Función para iniciar sesión de usuario
+export const loginUser = async (email, contrasena) => {
+  const { data: user, error } = await supabase
+    .from("usuarios")
+    .select("id, contrasena")
+    .eq("email", email)
+    .single();
+
+  if (error || !user) {
+    throw new Error("Usuario no encontrado o error en la consulta");
+  }
+
+  // Verificar la contraseña usando la función RPC
+  const { data: isValid, error: verifyError } = await supabase.rpc(
+    "verify_password",
+    {
+      password: contrasena,
+      hashed_password: user.contrasena,
+    }
+  );
+
+  if (verifyError) {
+    throw verifyError;
+  }
+
+  return isValid;
 };
