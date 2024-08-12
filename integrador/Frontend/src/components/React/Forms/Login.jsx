@@ -58,11 +58,12 @@ export function LoginForm() {
           type="email"
           id="correo"
           name="correo"
-          placeholder="Correo electronico o nombre de usuario"
+          placeholder="Correo electrónico o nombre de usuario"
           required
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-purple-500 bg-gray-100"
           value={formData.correo}
           onChange={handleChange}
+          autocomplete="username"
         />
 
         <label htmlFor="contrasena" className="block mt-4 mb-2">
@@ -77,6 +78,7 @@ export function LoginForm() {
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-purple-500 bg-gray-100"
           value={formData.contrasena}
           onChange={handleChange}
+          autocomplete="current-password"
         />
 
         <div className="flex items-center mt-4 mb-2">

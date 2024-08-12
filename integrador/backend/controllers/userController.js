@@ -1,21 +1,6 @@
 import * as userModel from "../models/userModel.js";
 import supabase from "../config/supabaseClient.js";
 
-// Controlador para iniciar sesión
-export const loginUser = async (req, res) => {
-  const { email, contrasena } = req.body;
-
-  try {
-    const isValid = await userModel.loginUser(email, contrasena);
-    if (!isValid) {
-      return res.status(401).json({ message: "Credenciales inválidas" });
-    }
-    res.json({ message: "Inicio de sesión exitoso" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
 // Controlador para obtener todos los usuarios
 export const getAllUsers = async (req, res) => {
   try {

@@ -1,39 +1,30 @@
-import supabase from "../config/supabaseClient";
+import jwt from 'jsonwebtoken';
+import * as userModel from "../models/userModel.js";
 
-export const createUser = async (req, res) => {
+// Controlador para iniciar sesión
+export const loginUser = async (req, res) => {
+  const { emailOrUsername, contrasena } = req.body;
+
   try {
-    const { nombre, apellido, alias, genero, email, contraseña } = req.body;
+    // Buscar el usuario por correo electrónico o nombre de usuario
+    const user = await userModel.getUserByEmailOrUsername(emailOrUsername);
 
-    // Validar que todos los campos requeridos estén presentes
-    if (!nombre || !apellido || !alias || !genero || !email || !contraseña) {
-      return res
-        .status(400)
-        .json({ error: "Todos los campos son obligatorios" });
+    if (!user) {
+      return res.status(401).json({ message: "Correo o nombre de usuario no encontrado" });
     }
 
-    // Crear el usuario en Supabase
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password: contraseña,
-    });
+    // Verificar la contraseña
+    const isValid = await userModel.verifyPassword(user.contrasena, contrasena);
 
-    if (signUpError) {
-      throw new Error(signUpError.message);
+    if (!isValid) {
+      return res.status(401).json({ message: "Contraseña inválida" });
     }
 
-    // Almacenar información adicional del usuario en tu base de datos
-    const { data, error: insertError } = await supabase
-      .from("usuarios")
-      .insert([{ nombre, apellido, alias, genero, email, perfil_id: 2 }]);
+    // Crear un token JWT
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    if (insertError) {
-      throw new Error(insertError.message);
-    }
-
-    res.status(201).json(data);
-    console.log("Usuario creado correctamente");
+    res.json({ message: "Inicio de sesión exitoso", token });
   } catch (error) {
-    console.error("Error al crear usuario:", error.message);
     res.status(500).json({ error: error.message });
   }
 };

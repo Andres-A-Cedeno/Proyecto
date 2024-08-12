@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors"; // Importar cors para manejo de políticas de acceso
 import router from "./routes/userRoutes.js";
 import routerGenres from "./routes/genresRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js"; // Importar las rutas de tareas
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
@@ -13,8 +14,7 @@ const port = process.env.PORT || 4322; // Definir puerto desde variable de entor
 app.use(cors()); // Habilitar CORS para permitir solicitudes desde otros dominios
 app.use(express.json()); // Habilitar JSON parsing en el cuerpo de la solicitud
 
-/*Conexion con mongo*/
-
+/* Conexión con MongoDB */
 async function connect() {
   await mongoose.connect(process.env.MONGODB_CONECCTION_STRING);
   console.log("Connected to MongoDB");
@@ -22,7 +22,8 @@ async function connect() {
 connect().catch(console.error);
 
 app.use("/api", router); // Usar las rutas definidas en userRoutes.js
-app.use("/api", routerGenres);
+app.use("/api", routerGenres); // Usar las rutas definidas en genresRoutes.js
+app.use("/api/tasks", taskRoutes); // Usar las rutas definidas en taskRoutes.js
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);

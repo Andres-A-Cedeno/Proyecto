@@ -18,13 +18,31 @@ export function PendingTasksForm() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData); 
+    console.log('Datos del formulario:', formData);
+    try {
+        const response = await fetch('http://localhost:4322/api/tasks/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+            console.log('Tarea creada exitosamente');
+        } else {
+            const errorData = await response.json();
+            console.error('Error al crear la tarea:', errorData);
+        }
+    } catch (error) {
+        console.error('Error en la solicitud:', error);
+    }
   };
+
   return (
-    <div className=" p-4">
-      <div className=" py-4 px-6 border rounded shadow">
+    <div className="p-4">
+      <div className="py-4 px-6 border rounded shadow">
         <h2 className="text-lg font-bold">Cuentame $NombreUsr</h2>
         <h2 className="font-extralight">¿Tienes tareas pendientes hoy?</h2>
         <div className="flex gap-2">
@@ -39,22 +57,24 @@ export function PendingTasksForm() {
 
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1  py-3 px-6 border mt-2 shadow rounded"
+        className="grid grid-cols-1 py-3 px-6 border mt-2 shadow rounded"
       >
         <div>
-          <p className="text-lg ">
+          <p className="text-lg">
             <span className="font-bold">Genial!</span>
           </p>
           <p className="text-lg">Cuentame</p>
         </div>
         <div className="flex flex-col shadow-inner border rounded p-1 md:p-1.5 relative text-sm md:text-base mb-2">
           <label htmlFor="tipo-tarea" className="block mb-1">
-            ¿Qué tipo de área es?
+            ¿Qué tipo de tarea es?
           </label>
           <select
-            name="tipoTarea"
+            name="tipo_tarea"
             id="tipoTarea"
-            className="bg-inherit text-neutral-600 focus:outline-none  text-sm md:text-base"
+            value={formData.tipo_tarea}
+            onChange={handleChange}
+            className="bg-inherit text-neutral-600 focus:outline-none text-sm md:text-base"
           >
             <option value="">Escoge el tipo</option>
             <option value="University">Universidad</option>
@@ -125,9 +145,11 @@ export function PendingTasksForm() {
             ¿Cuándo te gustaría que te recordemos esta tarea?
           </label>
           <select
-            name="Género"
-            id="genero"
-            className="bg-inherit text-neutral-600 focus:outline-none  text-sm md:text-base"
+            name="estimacion"
+            id="estimacion"
+            value={formData.estimacion}
+            onChange={handleChange}
+            className="bg-inherit text-neutral-600 focus:outline-none text-sm md:text-base"
           >
             <option value="">Escoge el tiempo</option>
             <option value="30">30 minutos</option>

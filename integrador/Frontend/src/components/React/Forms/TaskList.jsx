@@ -3,26 +3,33 @@ import React, { useState, useEffect } from 'react';
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
 
-  // Función para agregar una nueva tarea
-  const addTask = (task) => {
-    setTasks([...tasks, task]);
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('http://localhost:4322/api/tasks');
+      const data = await response.json();
+      setTasks(data);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
   };
 
-  // Simulación de recepción de nueva tarea desde un formulario
   useEffect(() => {
-    const handleStorageChange = (event) => {
-      if (event.key === 'newTask') {
-        const newTask = JSON.parse(event.newValue);
-        addTask(newTask);
-      }
-    };
+    fetchTasks();
+  }, []);
 
-    window.addEventListener('storage', handleStorageChange);
+  const calculateTimeLeft = (dueDate) => {
+    const difference = new Date(dueDate) - new Date();
+    let timeLeft = {};
 
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [tasks]);
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+      };
+    }
+    return timeLeft;
+  };
 
   return (
     <div className="bg-white w-full max-w-md p-8 rounded shadow-lg border border-purple-900 mt-4">
@@ -31,15 +38,21 @@ const TaskList = () => {
         <p className="text-gray-600">No hay tareas pendientes. <br /> Ingrese una tarea para empezar</p>
       ) : (
         <ul>
-          {tasks.map((task, index) => (
-            <li key={index} className="mb-4 p-4 border rounded shadow-sm">
-              <h3 className="font-semibold text-purple-900">{task.materia}</h3>
-              <p><strong>Descripción:</strong> {task.descripcion}</p>
-              <p><strong>Relevancia:</strong> {task.relevancia}</p>
-              <p><strong>Entrega:</strong> {task.entrega}</p>
-              <p><strong>Recordatorio:</strong> {task.estimacion}</p>
-            </li>
-          ))}
+          {tasks.map((task, index) => {
+            const taskDetails = task.creartareas;
+            if (!taskDetails) return null;
+
+            const timeLeft = calculateTimeLeft(taskDetails.fecha_entrega);
+            return (
+              <li key={index} className="mb-4 p-4 border rounded shadow-sm">
+                <h3 className="font-semibold text-purple-900">{taskDetails.materia}</h3>
+                <p><strong>Descripción:</strong> {taskDetails.descripcion}</p>
+                <p><strong>Relevancia:</strong> {taskDetails.relevancia}</p>
+                <p><strong>Entrega:</strong> {taskDetails.fecha_entrega}</p>
+                <p><strong>Recordatorio:</strong> {`${timeLeft.days} días, ${timeLeft.hours} horas, ${timeLeft.minutes} minutos`}</p>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
