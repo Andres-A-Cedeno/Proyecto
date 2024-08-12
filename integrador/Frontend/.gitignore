@@ -1,10 +1,13 @@
 # build output
-dist/
+frontend/dist/
 
 # generated types
+frontend/.astro/
 .astro/
 
 # dependencies
+frontend/node_modules/
+backend/node_modules/
 node_modules/
 
 # logs
