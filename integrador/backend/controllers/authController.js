@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import * as userModel from "../models/userModel.js";
 
 // Controlador para iniciar sesión
@@ -10,7 +10,9 @@ export const loginUser = async (req, res) => {
     const user = await userModel.getUserByEmailOrUsername(emailOrUsername);
 
     if (!user) {
-      return res.status(401).json({ message: "Correo o nombre de usuario no encontrado" });
+      return res
+        .status(401)
+        .json({ message: "Correo o nombre de usuario no encontrado" });
     }
 
     // Verificar la contraseña
@@ -21,7 +23,9 @@ export const loginUser = async (req, res) => {
     }
 
     // Crear un token JWT
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.json({ message: "Inicio de sesión exitoso", token });
   } catch (error) {

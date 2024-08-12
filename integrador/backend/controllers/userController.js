@@ -1,5 +1,6 @@
 import * as userModel from "../models/userModel.js";
 import supabase from "../config/supabaseClient.js";
+import UserRegister from "../schema/userRegister.js";
 
 // Controlador para obtener todos los usuarios
 export const getAllUsers = async (req, res) => {
@@ -32,7 +33,9 @@ export const createUser = async (req, res) => {
 
     // Validar que todos los campos requeridos estén presentes
     if (!nombre || !apellido || !alias || !email || !contraseña) {
-      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+      return res
+        .status(400)
+        .json({ error: "Todos los campos son obligatorios" });
     }
 
     // Asignar un género predeterminado si genero_id está vacío
@@ -56,27 +59,57 @@ export const createUser = async (req, res) => {
     // Almacenar la información del usuario en la base de datos
     const { data, error: insertError } = await supabase
       .from("usuarios")
-      .insert([{ nombre, apellido, alias, genero_id, email, contrasena: hashedPassword, perfil_id: 2 }]);
+      .insert([
+        {
+          nombre,
+          apellido,
+          alias,
+          genero_id,
+          email,
+          contrasena: hashedPassword,
+          perfil_id: 2,
+        },
+      ]);
+
+    //Almacenando el registro del usuario en mongo db
+    const nuevoUsuario = new UserRegister({
+      nombre,
+      apellido,
+      alias,
+      genero_id,
+      email,
+      contrasena: hashedPassword,
+      perfil_id: 2,
+    });
+
+    const resultado = await nuevoUsuario.save();
+    console.log("Usuario creado en mongoDB:", resultado);
 
     if (insertError) {
       // Verificar si el error es por duplicado de email o alias
-      if (insertError.message.includes('usuarios_email_key')) {
-        return res.status(400).json({ error: "El correo electrónico ya está en uso." });
+      if (insertError.message.includes("usuarios_email_key")) {
+        return res
+          .status(400)
+          .json({ error: "El correo electrónico ya está en uso." });
       }
-      if (insertError.message.includes('usuarios_alias_key')) {
-        return res.status(400).json({ error: "El nombre de usuario ya está en uso." });
+      if (insertError.message.includes("usuarios_alias_key")) {
+        return res
+          .status(400)
+          .json({ error: "El nombre de usuario ya está en uso." });
       }
 
       console.error("Error en la inserción de usuario:", insertError.message);
       throw new Error(insertError.message);
     }
-
     res.status(201).json(data);
     console.log("Usuario creado correctamente");
+    console.log("Usuario creando en mongo DB", resultado);
   } catch (error) {
     console.error("Error al crear usuario:", error.message);
     res.status(500).json({ error: error.message });
   }
+
+  //Guardando el registro del usuario en mongo db
 };
 
 // Controlador para actualizar un usuario existente
