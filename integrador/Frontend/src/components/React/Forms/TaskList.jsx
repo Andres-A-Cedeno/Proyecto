@@ -31,6 +31,19 @@ const TaskList = () => {
     return timeLeft;
   };
 
+  const getRelevanciaText = (relevancia_id) => {
+    switch (relevancia_id) {
+      case 1:
+        return 'Alta';
+      case 2:
+        return 'Media';
+      case 3:
+        return 'Baja';
+      default:
+        return 'Desconocida';
+    }
+  };
+
   return (
     <div className="bg-white w-full max-w-md p-8 rounded shadow-lg border border-purple-900 mt-4">
       <h2 className="text-2xl font-semibold mb-4 text-purple-900">Tareas Pendientes</h2>
@@ -43,11 +56,13 @@ const TaskList = () => {
             if (!taskDetails) return null;
 
             const timeLeft = calculateTimeLeft(taskDetails.fecha_entrega);
+            const relevanciaText = getRelevanciaText(taskDetails.relevancia_id);
+
             return (
               <li key={index} className="mb-4 p-4 border rounded shadow-sm">
                 <h3 className="font-semibold text-purple-900">{taskDetails.materia}</h3>
                 <p><strong>Descripción:</strong> {taskDetails.descripcion}</p>
-                <p><strong>Relevancia:</strong> {taskDetails.relevancia}</p>
+                <p><strong>Relevancia:</strong> {relevanciaText}</p>
                 <p><strong>Entrega:</strong> {taskDetails.fecha_entrega}</p>
                 <p><strong>Recordatorio:</strong> {`${timeLeft.days} días, ${timeLeft.hours} horas, ${timeLeft.minutes} minutos`}</p>
               </li>

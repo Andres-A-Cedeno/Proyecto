@@ -12,9 +12,12 @@ class TaskController {
 
     static async getTasks(req, res) {
         try {
+            console.log("Solicitud recibida en /api/tasks"); // Verifica si esto se imprime
             const tasks = await TaskModel.getAllTasks();
+            console.log("Tareas obtenidas:", tasks); // Verifica si las tareas se obtienen correctamente
             res.status(200).json(tasks);
         } catch (error) {
+            console.error("Error al obtener tareas:", error);
             res.status(500).json({ message: error.message });
         }
     }

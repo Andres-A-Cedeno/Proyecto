@@ -23,7 +23,7 @@ connect().catch(console.error);
 
 app.use("/api", router); // Usar las rutas definidas en userRoutes.js
 app.use("/api", routerGenres); // Usar las rutas definidas en genresRoutes.js
-app.use("/api/tasks", taskRoutes); // Usar las rutas definidas en taskRoutes.js
+app.use("/api", taskRoutes); // Usar las rutas definidas en taskRoutes.js
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
