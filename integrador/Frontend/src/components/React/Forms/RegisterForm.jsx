@@ -93,7 +93,10 @@ export function RegisterForm() {
         {/* El resto del formulario aquí */}
         <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-2">
           <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label htmlFor="nombre" className="text-sm md:text.base text-neutral-600">
+            <label
+              htmlFor="nombre"
+              className="text-sm md:text.base text-neutral-600"
+            >
               Nombre
             </label>
             <input
@@ -142,7 +145,9 @@ export function RegisterForm() {
               onChange={handleChange}
               required
             >
-              <option value="" disabled>Escoge tu género</option>
+              <option value="" disabled>
+                Escoge tu género
+              </option>
               {generos.map((genero) => (
                 <option key={genero.genero_id} value={genero.genero_id}>
                   {genero.descripcion_genero}
@@ -185,7 +190,7 @@ export function RegisterForm() {
           Registrarse
         </button>
       </form>
-      
+
       {/* Modal de confirmación de éxito */}
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
