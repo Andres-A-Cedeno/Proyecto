@@ -15,12 +15,30 @@ class TaskModel {
         return data;
     }
 
-    static async getAllTasks() {
-        const { data, error } = await db
+    static async getAllTasks(usuario_id) {
+        let query = db
             .from('listatareas')
             .select('*, creartareas!inner(tipo_tarea, materia, descripcion, relevancia_id, fecha_entrega)')
             .order('fecha_creacion', { ascending: false });
     
+        if (usuario_id) {
+            query = query.eq('creartareas.usuario_id', usuario_id); // Filtrar por usuario_id si está presente
+        }
+    
+        const { data, error } = await query;
+    
+        if (error) throw error;
+        return data;
+    }
+
+    // Nueva función para obtener tareas por ID de usuario
+    static async getTasksByUserId(id) {
+        const { data, error } = await db
+            .from('listatareas')
+            .select('*, creartareas!inner(tipo_tarea, materia, descripcion, relevancia_id, fecha_entrega)')
+            .eq('creartareas.usuario_id', id) // Filtrar por id de usuario
+            .order('fecha_creacion', { ascending: false });
+
         if (error) throw error;
         return data;
     }

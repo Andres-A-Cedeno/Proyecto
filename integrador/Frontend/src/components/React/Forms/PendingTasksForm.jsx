@@ -21,6 +21,7 @@ export function PendingTasksForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Datos del formulario:', formData);
+    
     try {
         const response = await fetch('http://localhost:4322/api/tasks/create', {
             method: 'POST',
@@ -29,6 +30,7 @@ export function PendingTasksForm() {
             },
             body: JSON.stringify(formData),
         });
+
         if (response.ok) {
             console.log('Tarea creada exitosamente');
         } else {
@@ -46,11 +48,11 @@ export function PendingTasksForm() {
         <h2 className="text-lg font-bold">Cuentame $NombreUsr</h2>
         <h2 className="font-extralight">¿Tienes tareas pendientes hoy?</h2>
         <div className="flex gap-2">
-          <label className="font-bold">
-            <input type="checkbox" className="rounded-full" /> Sí
+          <label htmlFor="tarea_si" className="font-bold">
+            <input type="checkbox" id="tarea_si" className="rounded-full" /> Sí
           </label>
-          <label className="font-bold">
-            <input type="checkbox" /> No
+          <label htmlFor="tarea_no" className="font-bold">
+            <input type="checkbox" id="tarea_no" /> No
           </label>
         </div>
       </div>
@@ -66,7 +68,7 @@ export function PendingTasksForm() {
           <p className="text-lg">Cuentame</p>
         </div>
         <div className="flex flex-col shadow-inner border rounded p-1 md:p-1.5 relative text-sm md:text-base mb-2">
-          <label htmlFor="tipo-tarea" className="block mb-1">
+          <label htmlFor="tipoTarea" className="block mb-1">
             ¿Qué tipo de tarea es?
           </label>
           <select

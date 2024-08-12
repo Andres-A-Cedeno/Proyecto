@@ -6,8 +6,12 @@ const TaskList = () => {
   const fetchTasks = async () => {
     try {
       const response = await fetch('http://localhost:4322/api/tasks');
+      if (!response.ok) {
+        throw new Error('Error en la respuesta de la API');
+      }
       const data = await response.json();
-      setTasks(data);
+      console.log("Tareas recibidas del backend:", data);
+      setTasks(data);  // Actualiza el estado con las tareas recibidas
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
@@ -16,6 +20,10 @@ const TaskList = () => {
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  useEffect(() => {
+    console.log("Estado de tareas después de setTasks:", tasks); // <-- Verifica si el estado se actualiza
+  }, [tasks]);  // Este useEffect se dispara cada vez que `tasks` se actualiza
 
   const calculateTimeLeft = (dueDate) => {
     const difference = new Date(dueDate) - new Date();
