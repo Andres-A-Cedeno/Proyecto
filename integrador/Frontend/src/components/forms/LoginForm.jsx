@@ -15,7 +15,7 @@ export default function LoginForm() {
       if (rol === "1") {
         navigate("/admin/dashboard", { replace: true });
       } else {
-        navigate("/user/dashboard", { replace: true });
+        navigate("/user/Dashboard", { replace: true });
       }
     }
   }, [navigate]);

@@ -1,11 +1,10 @@
 //import { useLocation } from "react-router-dom";
-//import Buttons from "./Buttons.jsx";
+import Buttons from "./Buttons.jsx";
 //import { Link } from "react-router-dom";
 
 function Info() {
   //const location = useLocation();
   //const isLandingPage = location.pathname === "/";
-
   //{isLandingPage && <Buttons />}
   return (
     <div className="flex flex-col bg-white justify-center items-center p-20 gap-2 w-1/2 min-h-screen text-black">
@@ -21,6 +20,7 @@ function Info() {
           y disfruta de la combinación perfecta entre entretenimiento y
           productividad en un solo lugar.
         </p>
+        <Buttons />
       </div>
     </div>
   );
