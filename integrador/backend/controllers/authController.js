@@ -1,34 +1,61 @@
-import jwt from "jsonwebtoken";
-import * as userModel from "../models/userModel.js";
+import { createUser } from "../models/userModel.js";
+import { signInUser } from "../models/auth/authModel.js";
 
-// Controlador para iniciar sesión
-export const loginUser = async (req, res) => {
-  const { emailOrUsername, contrasena } = req.body;
+export const registerUser = async (req, res) => {
+  console.log("Datos recibidas:", req.body);
+  const { nombre, apellido, nickname, email, password, genero_id } = req.body;
+
+  // Validar si todos los campos fueron enviados en la solicitud
+  if (!nombre || !apellido || !nickname || !email || !password || !genero_id) {
+    return res
+      .status(400)
+      .json({ error: "Todos los campos son obligatorios AUTH" });
+  }
 
   try {
-    // Buscar el usuario por correo electrónico o nombre de usuario
-    const user = await userModel.getUserByEmailOrUsername(emailOrUsername);
+    // Llamar al modelo para crear el usuario
+    const result = await createUser({
+      nombre,
+      apellido,
+      nickname,
+      email,
+      password,
+      genero_id,
+    });
+    res.status(200).json(result);
+    console.log("Usuario creado", result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-    if (!user) {
-      return res
-        .status(401)
-        .json({ message: "Correo o nombre de usuario no encontrado" });
-    }
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
-    // Verificar la contraseña
-    const isValid = await userModel.verifyPassword(user.contrasena, contrasena);
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ error: "Correo electrónico y contraseña obligatorios" });
+  }
 
-    if (!isValid) {
-      return res.status(401).json({ message: "Contraseña inválida" });
-    }
+  try {
+    // Llama al modelo para iniciar sesión
+    const { session, rol } = await signInUser(email, password);
+    const { access_token, refresh_token } = session;
 
-    // Crear un token JWT
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+    // Configurar cookies para el acceso
+    res.cookie("sb-access-token", access_token, {
+      httpOnly: true, // Asegura las cookies en producción
+      path: "/",
+    });
+    res.cookie("sb-refresh-token", refresh_token, {
+      httpOnly: true,
+      path: "/",
     });
 
-    res.json({ message: "Inicio de sesión exitoso", token });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    // Responder con un mensaje de éxito y el rol del usuario
+    res.status(200).json({ message: "Inicio de sesión exitoso", rol });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

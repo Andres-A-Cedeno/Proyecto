@@ -3,6 +3,7 @@ import cors from "cors"; // Importar cors para manejo de políticas de acceso
 import router from "./routes/userRoutes.js";
 import routerGenres from "./routes/genresRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js"; // Importar las rutas de tareas
+import authRoutes from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
@@ -24,6 +25,7 @@ connect().catch(console.error);
 app.use("/api", router); // Usar las rutas definidas en userRoutes.js
 app.use("/api", routerGenres); // Usar las rutas definidas en genresRoutes.js
 app.use("/api", taskRoutes); // Usar las rutas definidas en taskRoutes.js
+app.use("/api", authRoutes); // Usar las rutas definidas en authRoutes.js
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
