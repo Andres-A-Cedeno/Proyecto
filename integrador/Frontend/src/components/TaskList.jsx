@@ -66,7 +66,6 @@ const TaskList = () => {
           {tasks.map((task, index) => {
             const taskDetails = task.creartareas;
             if (!taskDetails) return null;
-
             const timeLeft = calculateTimeLeft(taskDetails.fecha_entrega);
             const relevanciaText = getRelevanciaText(taskDetails.relevancia_id);
 
@@ -97,4 +96,4 @@ const TaskList = () => {
   );
 };
 
-export { TaskList };
+export default TaskList;

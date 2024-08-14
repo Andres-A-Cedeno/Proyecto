@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function PendingTasksForm() {
+export default function PendingTasksForm() {
   const [formData, setFormData] = useState({
     tipo_tarea: "",
     materia: "",

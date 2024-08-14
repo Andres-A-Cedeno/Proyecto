@@ -1,11 +1,11 @@
 import DashboardLayout from "../../layout/User/DashboardLayout";
-import SideBar from "../../components/Sidebar";
+import UserTask from "./UserTask";
+//import SideBar from "../../components/SideBar/Sidebar";
 
 const Dashboard = () => {
   return (
     <DashboardLayout title="Dashboard">
-      <h1>Hola Bienvenido Usuario</h1>
-      <SideBar />
+      <UserTask />
     </DashboardLayout>
   );
 };
