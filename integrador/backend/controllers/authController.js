@@ -54,22 +54,21 @@ export const loginUser = async (req, res) => {
 
     res.setHeader("Set-Cookie", [
       cookie.serialize("access_token", session.access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Secure solo en producción
+        httpOnly: true, // Asegúrate de que está configurado como HttpOnly
+        secure: process.env.NODE_ENV === "production", // Solo en producción
         maxAge: 60 * 60, // 1 hora
         sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // Lax en desarrollo
         path: "/",
       }),
       cookie.serialize("refresh_token", session.refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Secure solo en producción
+        httpOnly: true, // HttpOnly también en el refresh token
+        secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24 * 7, // 1 semana
-        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // Lax en desarrollo
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
         path: "/",
       }),
       cookie.serialize("rol", userRole, {
-        // Almacenar el rol en una cookie
-        httpOnly: true,
+        httpOnly: false, // Esto está bien si necesitas acceso a "rol" en el frontend
         secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24 * 7, // 1 semana
         sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
@@ -87,4 +86,34 @@ export const loginUser = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+export const logoutUser = (req, res) => {
+  // Eliminar las cookies configurando su expiración en una fecha pasada
+  res.setHeader("Set-Cookie", [
+    cookie.serialize("access_token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: -1, // Eliminar la cookie
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      path: "/",
+    }),
+    cookie.serialize("refresh_token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: -1, // Eliminar la cookie
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      path: "/",
+    }),
+    cookie.serialize("rol", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: -1, // Eliminar la cookie
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      path: "/",
+    }),
+  ]);
+
+  // Responder con éxito
+  res.status(200).json({ message: "Logout exitoso" });
 };
