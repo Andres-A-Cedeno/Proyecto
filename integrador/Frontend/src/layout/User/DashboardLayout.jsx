@@ -12,7 +12,7 @@ const DashboardLayout = ({ children, title }) => {
     <div className="flex h-screen">
       <SideBar />
       <main className="flex-1 p-4">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end">
           <LogoutButton />
         </div>
         {children}
