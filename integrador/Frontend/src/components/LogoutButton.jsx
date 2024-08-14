@@ -1,23 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import supabase from "../../config/supabaseClient"; // Asegúrate de que la ruta al cliente de Supabase es correcta
 
 const LogoutButton = () => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
-      // Limpia cualquier dato almacenado en localStorage
-      localStorage.removeItem("token");
-      localStorage.removeItem("rol");
-
-      // Redirige al usuario a la página de inicio de sesión
-      navigate("/login", { replace: true });
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error.message);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("rol");
+    navigate("/login", { replace: true });
   };
 
   return (
