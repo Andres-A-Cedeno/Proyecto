@@ -1,5 +1,6 @@
 import { createUser } from "../models/userModel.js";
-import { signInUser } from "../models/auth/authModel.js";
+
+import { signInUser, getUserRole } from "../models/auth/authModel.js";
 
 export const registerUser = async (req, res) => {
   console.log("Datos recibidas:", req.body);
@@ -40,23 +41,28 @@ export const loginUser = async (req, res) => {
 
   try {
     // Llama al modelo para iniciar sesión
-    const { session, rol } = await signInUser(email, password);
-    const { access_token, refresh_token } = session;
+    const { user, session } = await signInUser(email, password);
 
-    console.log("Sesión iniciada:", session);
+    if (!user || !session) {
+      return res.status(500).json({ error: "Error al iniciar sesión" });
+    }
 
-    // Configurar cookies para el acceso
-    res.cookie("sb-access-token", access_token, {
-      httpOnly: true,
-      path: "/",
-    });
-    res.cookie("sb-refresh-token", refresh_token, {
-      httpOnly: true,
-      path: "/",
-    });
+    // Llama al modelo para obtener el rol del usuario
+    const userRole = await getUserRole(user.id);
 
     // Enviar token y rol al cliente
-    res.status(200).json({ token: access_token, rol });
+    const access_token = session.access_token;
+    const refresh_token = session.refresh_token;
+
+    res.status(200).json({
+      token: access_token,
+      refreshToken: refresh_token,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: userRole,
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

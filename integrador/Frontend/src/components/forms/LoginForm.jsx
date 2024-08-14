@@ -5,11 +5,11 @@ export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-
+  /*
   useEffect(() => {
     const token = localStorage.getItem("token");
     const rol = localStorage.getItem("rol");
-
+    
     if (token) {
       if (rol === "admin") {
         navigate("/admin/dashboard", { replace: true });
@@ -18,7 +18,7 @@ export default function LoginForm() {
       }
     }
   }, [navigate]);
-
+*/
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -36,20 +36,22 @@ export default function LoginForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Error al iniciar sesión");
+        throw new Error(errorData.error || "Faltan credenciales");
       }
 
       const data = await response.json();
+      console.log("Login exitoso:", data);
+      /*
       localStorage.setItem("token", data.token);
       localStorage.setItem("rol", data.rol);
-
       if (data.rol === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate("/user/dashboard", { replace: true });
-      }
+      }*/
     } catch (error) {
       setErrorMessage(error.message);
+      console.error("Error en el inicio de sesión:", error);
     }
   };
 

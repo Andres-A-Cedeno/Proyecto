@@ -8,23 +8,29 @@ export const signInUser = async (email, password) => {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(error.message || "Error al iniciar sesión");
   }
 
   const user = data.user;
 
-  // Obtener el rol del usuario desde la tabla 'usuarios'
-  const { data: userData, error: userError } = await supabase
+  if (!user) {
+    throw new Error("No se pudo obtener la información del usuario");
+  }
+  console.log("Usuario:", user);
+
+  return { user, session: data.session };
+};
+
+export const getUserRole = async (userId) => {
+  const { data: userData, error } = await supabase
     .from("usuarios")
     .select("perfil_id")
-    .eq("id", user.perfil_id)
+    .eq("id", userId)
     .single();
 
-  if (userError) {
-    throw new Error(userError.message);
+  if (error) {
+    throw new Error(error.message || "Error al obtener el rol del usuario");
   }
-
-  console.log("Sesion iniciada:", data);
-
-  return { ...data, rol: userData.rol };
+  console.log("Rol del usuario:", userData.perfil_id);
+  return userData.perfil_id;
 };
