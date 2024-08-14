@@ -6,11 +6,10 @@ export const getAllUsers = async () => {
     id,
     nombre,
     apellido,
-    alias,
     email,
-    contrasena,
     perfil_id,
     genero_id,
+    nickname,
     generos (genero_id, descripcion_genero),
     perfiles (id, tipo, descripcion)
   `);
@@ -31,10 +30,8 @@ export const getUserById = async (id) => {
       id,
       nombre,
       apellido,
-      alias,
-      genero,
+      nickname,
       email,
-      contrasena,
       perfil_id,
       perfiles (id, tipo, descripcion)
     `
