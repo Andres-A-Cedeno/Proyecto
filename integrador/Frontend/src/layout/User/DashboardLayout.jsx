@@ -1,7 +1,7 @@
-//import Header from "../components/Header";
-import { useEffect } from "react";
 import PropTypes from "prop-types";
+import { useEffect } from "react";
 import SideBar from "../../components/SideBar/Sidebar";
+import LogoutButton from "../../components/LogoutButton";
 
 const DashboardLayout = ({ children, title }) => {
   useEffect(() => {
@@ -11,7 +11,12 @@ const DashboardLayout = ({ children, title }) => {
   return (
     <div className="flex h-screen">
       <SideBar />
-      <main>{children}</main>
+      <main className="flex-1 p-4">
+        <div className="flex justify-end mb-4">
+          <LogoutButton />
+        </div>
+        {children}
+      </main>
     </div>
   );
 };

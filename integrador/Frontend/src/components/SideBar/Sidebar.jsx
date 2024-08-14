@@ -8,13 +8,21 @@ import {
   CircleUserRound,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState, createContext } from "react";
-import { UserContext } from "../../context/UserContext"; // Importar el UserContext
+import { useState, createContext, useContext } from "react"; // Una sola importación de useContext
+import { UserContext } from '../../context/UserContext'; // Importar correctamente el UserContext
 
+// Define el SideBarContext una vez, antes de la definición del componente
 export const SideBarContext = createContext();
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const { user } = useContext(UserContext); // Acceder al contexto del usuario
+
+  // Generar el URL del avatar con las iniciales del nombre y apellido
+  const getAvatarUrl = (name, surname) => {
+    const initials = `${name ? name.charAt(0) : ''}${surname ? surname.charAt(0) : ''}`;
+    return `https://ui-avatars.com/api/?name=${initials}&background=random`;
+  };
 
   return (
     <aside
@@ -54,7 +62,7 @@ const Sidebar = () => {
 
         <div className="border-t flex p-3 items-center">
           <img
-            src="https://ui-avatars.com/api/?name=John+Doe"
+            src={getAvatarUrl(user?.nombre, user?.apellido)} // URL dinámico del avatar
             alt="User Avatar"
             className="w-10 h-10 rounded-full"
           />
@@ -65,8 +73,8 @@ const Sidebar = () => {
             `}
           >
             <div className="leading-4">
-              <h4 className="font-semibold text-xs">Nombre Usuario</h4>
-              <span className="text-xs text-gray-600">correo@gmail.com</span>
+              <h4 className="font-semibold text-xs">{user?.nombre || 'Nombre Usuario'} {user?.apellido || ''}</h4>
+              <span className="text-xs text-gray-600">{user?.email || 'correo@gmail.com'}</span>
             </div>
           </div>
         </div>

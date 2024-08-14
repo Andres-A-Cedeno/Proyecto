@@ -7,15 +7,14 @@ export default function LoginForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verifica si el usuario ya ha iniciado sesión
     const token = localStorage.getItem("token");
-    const rol = localStorage.getItem("perfil_id");
+    const rol = localStorage.getItem("rol");
 
     if (token) {
-      if (rol === "1") {
+      if (rol === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
-        navigate("/user/Dashboard", { replace: true });
+        navigate("/user/dashboard", { replace: true });
       }
     }
   }, [navigate]);
@@ -42,9 +41,8 @@ export default function LoginForm() {
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
-      localStorage.setItem("rol", data.rol); // Almacena el rol del usuario
+      localStorage.setItem("rol", data.rol);
 
-        // Redirigir según el rol
       if (data.rol === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
@@ -54,7 +52,7 @@ export default function LoginForm() {
       setErrorMessage(error.message);
     }
   };
-  
+
   return (
     <div className="bg-white w-full max-w-md p-8 rounded shadow-lg border border-purple-900">
       <h2 className="text-2xl font-semibold mb-4 text-purple-900">
