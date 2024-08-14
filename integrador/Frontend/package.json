@@ -14,6 +14,7 @@
     "@nextui-org/react": "^2.4.6",
     "autoprefixer": "^10.4.20",
     "framer-motion": "^11.3.24",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.427.0",
     "postcss": "^8.4.41",
     "react": "^18.3.1",

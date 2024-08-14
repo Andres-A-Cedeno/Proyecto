@@ -12,7 +12,12 @@ dotenv.config(); // Cargar variables de entorno
 const app = express();
 const port = process.env.PORT || 4322; // Definir puerto desde variable de entorno o usar 4322
 
-app.use(cors()); // Habilitar CORS para permitir solicitudes desde otros dominios
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Reemplaza con la URL de tu frontend
+    credentials: true, // Permitir envío de cookies y credenciales
+  })
+); // Habilitar CORS para permitir solicitudes desde otros dominios
 app.use(express.json()); // Habilitar JSON parsing en el cuerpo de la solicitud
 
 /* Conexión con MongoDB */

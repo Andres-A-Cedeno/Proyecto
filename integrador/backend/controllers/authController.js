@@ -1,5 +1,5 @@
 import { createUser } from "../models/userModel.js";
-
+import cookie from "cookie";
 import { signInUser, getUserRole } from "../models/auth/authModel.js";
 
 export const registerUser = async (req, res) => {
@@ -51,12 +51,33 @@ export const loginUser = async (req, res) => {
     const userRole = await getUserRole(user.id);
 
     // Enviar token y rol al cliente
-    const access_token = session.access_token;
-    const refresh_token = session.refresh_token;
+
+    res.setHeader("Set-Cookie", [
+      cookie.serialize("access_token", session.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure solo en producción
+        maxAge: 60 * 60, // 1 hora
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // Lax en desarrollo
+        path: "/",
+      }),
+      cookie.serialize("refresh_token", session.refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure solo en producción
+        maxAge: 60 * 60 * 24 * 7, // 1 semana
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // Lax en desarrollo
+        path: "/",
+      }),
+      cookie.serialize("rol", userRole, {
+        // Almacenar el rol en una cookie
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7, // 1 semana
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+        path: "/",
+      }),
+    ]);
 
     res.status(200).json({
-      token: access_token,
-      refreshToken: refresh_token,
       user: {
         id: user.id,
         email: user.email,

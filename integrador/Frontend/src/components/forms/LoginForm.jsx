@@ -1,24 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  /*
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const rol = localStorage.getItem("rol");
-    
+    const token = Cookies.get("access_token");
+    const role = Cookies.get("rol"); // Leer el rol desde la cookie
+
     if (token) {
-      if (rol === "admin") {
+      // Verifica tanto el token como el rol y redirige según corresponda
+      if (role === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate("/user/dashboard", { replace: true });
       }
     }
   }, [navigate]);
-*/
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -32,6 +34,7 @@ export default function LoginForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
       });
 
       if (!response.ok) {
@@ -41,14 +44,15 @@ export default function LoginForm() {
 
       const data = await response.json();
       console.log("Login exitoso:", data);
-      /*
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("rol", data.rol);
-      if (data.rol === "admin") {
+
+      // Los cookies ya están configurados por el backend, simplemente redirige basado en el rol
+      const role = Cookies.get("rol");
+
+      if (role === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate("/user/dashboard", { replace: true });
-      }*/
+      }
     } catch (error) {
       setErrorMessage(error.message);
       console.error("Error en el inicio de sesión:", error);
