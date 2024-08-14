@@ -34,3 +34,29 @@ export const getUserRole = async (userId) => {
   console.log("Rol del usuario:", userData.perfil_id);
   return userData.perfil_id;
 };
+
+export const getUserName = async (userId) => {
+  try {
+    const { data: userData, error } = await supabase
+      .from("usuarios")
+      .select("nombre, apellido")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      throw new Error(
+        error.message || "Error al obtener los datos del usuario"
+      );
+    }
+
+    if (!userData) {
+      throw new Error("Usuario no encontrado");
+    }
+
+    console.log("Datos del usuario:", userData);
+    return userData;
+  } catch (error) {
+    console.error("Error al obtener el nombre del usuario:", error);
+    throw error;
+  }
+};

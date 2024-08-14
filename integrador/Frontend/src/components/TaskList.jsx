@@ -5,7 +5,9 @@ const TaskList = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch("http://localhost:4322/api/tasks");
+      const response = await fetch(
+        "http://localhost:4322/api/tasks/getAlltasks"
+      );
       if (!response.ok) {
         throw new Error("Error en la respuesta de la API");
       }
