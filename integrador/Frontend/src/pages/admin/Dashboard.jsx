@@ -1,4 +1,5 @@
-import DashboardLayout from "../../layout/Admin/DashboardLayout";
+import DashboardLayout from "../../layout/User/DashboardLayout";
+
 import UserTable from "../../components/Admin/UserTable";
 
 const Dashboard = () => {
