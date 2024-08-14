@@ -1,19 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { UserContext } from "../../context/UserContext"; // Importar el UserContext
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext); // Acceder al contexto
 
   useEffect(() => {
     const token = Cookies.get("access_token");
-    const role = Cookies.get("rol"); // Leer el rol desde la cookie
+    const role = Cookies.get("rol");
+
+    console.log("Token:", token); // Depuración: Verificar el token
+    console.log("Rol:", role); // Depuración: Verificar el rol
 
     if (token) {
-      // Verifica tanto el token como el rol y redirige según corresponda
-      if (role === "admin") {
+      if (role === "1") {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate("/user/dashboard", { replace: true });
@@ -30,7 +34,7 @@ export default function LoginForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:4322/api/login", {
+      const response = await fetch("http://localhost:4322/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -45,10 +49,17 @@ export default function LoginForm() {
       const data = await response.json();
       console.log("Login exitoso:", data);
 
-      // Los cookies ya están configurados por el backend, simplemente redirige basado en el rol
+      // Almacenar los datos del usuario en el contexto
+      setUser(data.user);
+
+      // Verificar que las cookies se han establecido correctamente
+      const token = Cookies.get("access_token");
       const role = Cookies.get("rol");
 
-      if (role === "admin") {
+      console.log("Token después del login:", token); // Depuración: Verificar el token después del login
+      console.log("Rol después del login:", role); // Depuración: Verificar el rol después del login
+
+      if (role === "1") {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate("/user/dashboard", { replace: true });

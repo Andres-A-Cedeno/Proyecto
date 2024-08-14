@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -10,11 +10,28 @@ const UserTable = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:4322/api/users');
+      const response = await fetch(
+        "http://localhost:4322/api/users/getAllUsers",
+        {
+          method: "GET",
+          credentials: "include", // Incluir cookies en la solicitud
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Manejar el caso de no autorizado
+          console.error("No autorizado. Redirigiendo al login...");
+          // Aquí puedes redirigir al usuario al login o mostrar un mensaje
+          // navigate('/login', { replace: true });
+        }
+        throw new Error("Error al obtener los usuarios");
+      }
+
       const data = await response.json();
       setUsers(data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     }
   };
 
@@ -25,27 +42,29 @@ const UserTable = () => {
   const handleSave = async (userId, updatedData) => {
     try {
       await fetch(`http://localhost:4322/api/users/${userId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
+        credentials: "include", // Incluir cookies en la solicitud
         body: JSON.stringify(updatedData),
       });
       fetchUsers(); // Refrescar la lista de usuarios
       setEditingUser(null); // Cerrar el modo de edición
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
     }
   };
 
   const handleDelete = async (userId) => {
     try {
-      await fetch(`http://localhost:4322/api/users/${userId}`, {
-        method: 'DELETE',
+      await fetch(`http://localhost:4322/api/users/deleteUser/${userId}`, {
+        method: "DELETE",
+        credentials: "include", // Incluir cookies en la solicitud
       });
       fetchUsers(); // Refrescar la lista de usuarios
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
     }
   };
 
@@ -83,7 +102,10 @@ const UserTable = () => {
                     type="text"
                     value={editingUser.apellido}
                     onChange={(e) =>
-                      setEditingUser({ ...editingUser, apellido: e.target.value })
+                      setEditingUser({
+                        ...editingUser,
+                        apellido: e.target.value,
+                      })
                     }
                   />
                 ) : (
@@ -96,14 +118,19 @@ const UserTable = () => {
                   <select
                     value={editingUser.perfil_id}
                     onChange={(e) =>
-                      setEditingUser({ ...editingUser, perfil_id: parseInt(e.target.value) })
+                      setEditingUser({
+                        ...editingUser,
+                        perfil_id: parseInt(e.target.value),
+                      })
                     }
                   >
                     <option value={1}>Administrador</option>
                     <option value={2}>Usuario</option>
                   </select>
+                ) : user.perfil_id === 1 ? (
+                  "Administrador"
                 ) : (
-                  user.perfil_id === 1 ? 'Administrador' : 'Usuario'
+                  "Usuario"
                 )}
               </td>
               <td className="py-2 px-4 border-b">

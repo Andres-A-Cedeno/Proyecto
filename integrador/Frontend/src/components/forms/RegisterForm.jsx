@@ -19,7 +19,9 @@ function RegisterForm() {
   useEffect(() => {
     async function fetchGeneros() {
       try {
-        const response = await fetch("http://localhost:4322/api/genres");
+        const response = await fetch(
+          "http://localhost:4322/api/genres/getAllgenres"
+        );
         if (!response.ok) {
           throw new Error("Error al obtener la lista de géneros");
         }
@@ -54,7 +56,7 @@ function RegisterForm() {
     console.log(formData);
 
     try {
-      const response = await fetch("http://localhost:4322/api/register", {
+      const response = await fetch("http://localhost:4322/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
