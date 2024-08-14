@@ -6,19 +6,12 @@ export const getAllUsers = async () => {
     id,
     nombre,
     apellido,
-    alias,
     email,
-    contrasena,
     perfil_id,
     genero_id,
-    generos (genero_id, descripcion_genero
-      
-    ),
-    perfiles (
-      id,
-      tipo,
-      descripcion
-    )
+    nickname,
+    generos (genero_id, descripcion_genero),
+    perfiles (id, tipo, descripcion)
   `);
 
   if (error) {
@@ -37,16 +30,10 @@ export const getUserById = async (id) => {
       id,
       nombre,
       apellido,
-      alias,
-      genero,
+      nickname,
       email,
-      contrasena,
       perfil_id,
-      perfiles (
-        id,
-        tipo,
-        descripcion
-      )
+      perfiles (id, tipo, descripcion)
     `
     )
     .eq("id", id)
@@ -60,46 +47,51 @@ export const getUserById = async (id) => {
 };
 
 // Función para crear un nuevo usuario con contraseña hasheada
-export const createUser = async (user) => {
-  const { nombre, apellido, alias, genero_id, email, contrasena, perfil_id } =
-    user;
+export const createUser = async ({
+  nombre,
+  apellido,
+  nickname,
+  email,
+  password,
+  genero_id,
+}) => {
+  try {
+    // Intentar registrar el usuario con Supabase
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-  console.log(user);
-
-  // Llamar a la función RPC para hashear la contraseña
-  const { data: hashedPassword, error: hashError } = await supabase.rpc(
-    "hash_password",
-    {
-      password: contrasena,
+    if (error) {
+      throw new Error(error.message);
     }
-  );
-  console.log("Conrtrasena hasheada", hashedPassword);
 
-  if (hashError) {
-    throw hashError;
+    const user = data.user;
+    const perfil_id = 2; // Asignar un perfil_id por defecto
+
+    // Insertar los datos adicionales del usuario en la tabla 'usuarios'
+    const { error: dbError } = await supabase
+      .from("usuarios")
+      .insert([
+        {
+          id: user?.id,
+          nombre,
+          apellido,
+          nickname,
+          email,
+          genero_id,
+          perfil_id,
+        },
+      ]);
+
+    if (dbError) {
+      throw new Error(dbError.message);
+    }
+
+    return { message: "Usuario registrado con éxito" };
+  } catch (err) {
+    throw new Error(err.message);
   }
-
-  // Insertar el nuevo usuario en la tabla 'usuarios'
-  const { data, error: insertError } = await supabase
-    .from("usuarios")
-    .insert([
-      {
-        nombre,
-        apellido,
-        alias,
-        genero_id,
-        email,
-        contrasena: hashedPassword,
-        perfil_id,
-      },
-    ])
-    .single();
-
-  if (insertError) {
-    throw insertError;
-  }
-  console.log("Usuario insertado correctamente:", data);
-  return data;
 };
 
 // Función para actualizar un usuario existente

@@ -1,39 +1,90 @@
-import supabase from "../config/supabaseClient";
+import { createUser } from "../models/userModel.js";
+import cookie from "cookie";
+import { signInUser, getUserRole } from "../models/auth/authModel.js";
 
-export const createUser = async (req, res) => {
+export const registerUser = async (req, res) => {
+  console.log("Datos recibidas:", req.body);
+  const { nombre, apellido, nickname, email, password, genero_id } = req.body;
+
+  // Validar si todos los campos fueron enviados en la solicitud
+  if (!nombre || !apellido || !nickname || !email || !password || !genero_id) {
+    return res
+      .status(400)
+      .json({ error: "Todos los campos son obligatorios AUTH" });
+  }
+
   try {
-    const { nombre, apellido, alias, genero, email, contraseña } = req.body;
-
-    // Validar que todos los campos requeridos estén presentes
-    if (!nombre || !apellido || !alias || !genero || !email || !contraseña) {
-      return res
-        .status(400)
-        .json({ error: "Todos los campos son obligatorios" });
-    }
-
-    // Crear el usuario en Supabase
-    const { error: signUpError } = await supabase.auth.signUp({
+    // Llamar al modelo para crear el usuario
+    const result = await createUser({
+      nombre,
+      apellido,
+      nickname,
       email,
-      password: contraseña,
+      password,
+      genero_id,
     });
+    res.status(200).json(result);
+    console.log("Usuario creado", result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-    if (signUpError) {
-      throw new Error(signUpError.message);
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ error: "Correo electrónico y contraseña obligatorios" });
+  }
+
+  try {
+    // Llama al modelo para iniciar sesión
+    const { user, session } = await signInUser(email, password);
+
+    if (!user || !session) {
+      return res.status(500).json({ error: "Error al iniciar sesión" });
     }
 
-    // Almacenar información adicional del usuario en tu base de datos
-    const { data, error: insertError } = await supabase
-      .from("usuarios")
-      .insert([{ nombre, apellido, alias, genero, email, perfil_id: 2 }]);
+    // Llama al modelo para obtener el rol del usuario
+    const userRole = await getUserRole(user.id);
 
-    if (insertError) {
-      throw new Error(insertError.message);
-    }
+    // Enviar token y rol al cliente
 
-    res.status(201).json(data);
-    console.log("Usuario creado correctamente");
-  } catch (error) {
-    console.error("Error al crear usuario:", error.message);
-    res.status(500).json({ error: error.message });
+    res.setHeader("Set-Cookie", [
+      cookie.serialize("access_token", session.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure solo en producción
+        maxAge: 60 * 60, // 1 hora
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // Lax en desarrollo
+        path: "/",
+      }),
+      cookie.serialize("refresh_token", session.refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure solo en producción
+        maxAge: 60 * 60 * 24 * 7, // 1 semana
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // Lax en desarrollo
+        path: "/",
+      }),
+      cookie.serialize("rol", userRole, {
+        // Almacenar el rol en una cookie
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7, // 1 semana
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+        path: "/",
+      }),
+    ]);
+
+    res.status(200).json({
+      user: {
+        id: user.id,
+        email: user.email,
+        role: userRole,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
