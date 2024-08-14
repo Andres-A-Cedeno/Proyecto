@@ -37,24 +37,24 @@ export default function LoginForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Error al iniciar sesión");
+        throw new Error(errorData.error || "Error al iniciar sesión");
       }
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
       localStorage.setItem("rol", data.rol); // Almacena el rol del usuario
 
-      // Redirigir según el rol
+        // Redirigir según el rol
       if (data.rol === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
-        navigate("/dashboard", { replace: true });
+        navigate("/user/dashboard", { replace: true });
       }
     } catch (error) {
       setErrorMessage(error.message);
     }
   };
-
+  
   return (
     <div className="bg-white w-full max-w-md p-8 rounded shadow-lg border border-purple-900">
       <h2 className="text-2xl font-semibold mb-4 text-purple-900">

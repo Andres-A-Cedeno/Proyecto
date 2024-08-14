@@ -29,10 +29,10 @@ export const getUserById = async (req, res) => {
 // Controlador para crear un nuevo usuario
 export const createUser = async (req, res) => {
   try {
-    let { nombre, apellido, alias, genero_id, email, contraseña } = req.body;
+    let { nombre, apellido, nickname, genero_id, email } = req.body;
 
     // Validar que todos los campos requeridos estén presentes
-    if (!nombre || !apellido || !alias || !email || !contraseña) {
+    if (!nombre || !apellido || !nickname || !email || !contraseña) {
       return res
         .status(400)
         .json({ error: "Todos los campos son obligatorios" });
@@ -48,7 +48,7 @@ export const createUser = async (req, res) => {
     // Encriptar la contraseña usando la función RPC en Supabase
     const { data: hashedPassword, error: hashError } = await supabase.rpc(
       "hash_password",
-      { password: contraseña }
+      { password: contrasena }
     );
 
     if (hashError) {
@@ -63,7 +63,7 @@ export const createUser = async (req, res) => {
         {
           nombre,
           apellido,
-          alias,
+          nickname,
           genero_id,
           email,
           contrasena: hashedPassword,
@@ -75,7 +75,7 @@ export const createUser = async (req, res) => {
     const nuevoUsuario = new UserRegister({
       nombre,
       apellido,
-      alias,
+      nickname,
       genero_id,
       email,
       contrasena: hashedPassword,
@@ -132,6 +132,16 @@ export const deleteUser = async (req, res) => {
   try {
     await userModel.deleteUser(id);
     res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.userId; // req.userId viene del middleware de autenticación
+    const user = await getUserById(userId);
+    res.json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

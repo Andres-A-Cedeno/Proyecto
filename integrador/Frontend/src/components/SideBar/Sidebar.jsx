@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, createContext } from "react";
+import { UserContext } from "../../context/UserContext"; // Importar el UserContext
 
 export const SideBarContext = createContext();
 

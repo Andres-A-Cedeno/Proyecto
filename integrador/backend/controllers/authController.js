@@ -45,7 +45,7 @@ export const loginUser = async (req, res) => {
 
     // Configurar cookies para el acceso
     res.cookie("sb-access-token", access_token, {
-      httpOnly: true, // Asegura las cookies en producción
+      httpOnly: true,
       path: "/",
     });
     res.cookie("sb-refresh-token", refresh_token, {
@@ -53,8 +53,8 @@ export const loginUser = async (req, res) => {
       path: "/",
     });
 
-    // Responder con un mensaje de éxito y el rol del usuario
-    res.status(200).json({ message: "Inicio de sesión exitoso", rol });
+    // Enviar token y rol al cliente
+    res.status(200).json({ token: access_token, rol });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
