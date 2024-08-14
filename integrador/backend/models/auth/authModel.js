@@ -17,12 +17,14 @@ export const signInUser = async (email, password) => {
   const { data: userData, error: userError } = await supabase
     .from("usuarios")
     .select("perfil_id")
-    .eq("id", user.id)
+    .eq("id", user.perfil_id)
     .single();
 
   if (userError) {
     throw new Error(userError.message);
   }
+
+  console.log("Sesion iniciada:", data);
 
   return { ...data, rol: userData.rol };
 };

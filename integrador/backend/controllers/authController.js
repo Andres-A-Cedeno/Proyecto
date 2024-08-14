@@ -43,6 +43,8 @@ export const loginUser = async (req, res) => {
     const { session, rol } = await signInUser(email, password);
     const { access_token, refresh_token } = session;
 
+    console.log("Sesión iniciada:", session);
+
     // Configurar cookies para el acceso
     res.cookie("sb-access-token", access_token, {
       httpOnly: true,
