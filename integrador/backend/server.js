@@ -29,11 +29,11 @@ connect().catch(console.error);
 
 // Rutas públicas
 app.use("/api/auth", authRoutes);
+app.use("/api/genres", genresRoutes);
 
 // Rutas protegidas
 app.use("/api/users", authenticateToken, userRoutes);
-app.use("/api/genres", genresRoutes);
-app.use("/api/tasks", authenticateToken, taskRoutes);
+app.use("/api/tasks", taskRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);

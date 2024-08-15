@@ -1,6 +1,10 @@
 import { createUser } from "../models/userModel.js";
 import cookie from "cookie";
-import { signInUser, getUserRole } from "../models/auth/authModel.js";
+import {
+  signInUser,
+  getUserRole,
+  getUserName,
+} from "../models/auth/authModel.js";
 
 export const registerUser = async (req, res) => {
   console.log("Datos recibidas:", req.body);
@@ -49,7 +53,7 @@ export const loginUser = async (req, res) => {
 
     // Llama al modelo para obtener el rol del usuario
     const userRole = await getUserRole(user.id);
-
+    const { nombre, apellido } = await getUserName(user.id);
     // Enviar token y rol al cliente
 
     res.setHeader("Set-Cookie", [
@@ -81,6 +85,8 @@ export const loginUser = async (req, res) => {
         id: user.id,
         email: user.email,
         role: userRole,
+        nombre,
+        apellido,
       },
     });
   } catch (err) {
