@@ -12,9 +12,9 @@ function RegisterForm() {
   });
 
   const [generos, setGeneros] = useState([]);
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para controlar el modal de éxito
-  const [errorMessage, setErrorMessage] = useState(""); // Estado para controlar el mensaje de error
-  const [showErrorModal, setShowErrorModal] = useState(false); // Estado para controlar el modal de error
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
     async function fetchGeneros() {
@@ -27,7 +27,6 @@ function RegisterForm() {
         }
         const data = await response.json();
         setGeneros(data);
-        console.log(data);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -40,20 +39,17 @@ function RegisterForm() {
     const { name, value } = e.target;
     const convertedValue = name === "genero_id" ? parseInt(value, 10) : value;
     setFormData({
-      ...formData, // Copia el objeto formData
-      [name]: convertedValue, // Asigna el nuevo valor
+      ...formData,
+      [name]: convertedValue,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Asignar "Masculino" (genero_id = 1) si genero_id está vacío
     if (!formData.genero_id) {
-      formData.genero_id = 1; // "Masculino" por defecto
+      formData.genero_id = 1;
     }
-
-    console.log(formData);
 
     try {
       const response = await fetch("http://localhost:4322/api/auth/register", {
@@ -70,78 +66,85 @@ function RegisterForm() {
       }
 
       const data = await response.json();
-      console.log("Usuario creado:", data);
-      setShowSuccessModal(true); // Mostrar el modal de éxito al crear el usuario correctamente
+      setShowSuccessModal(true);
     } catch (error) {
-      console.error("Error:", error.message);
-      setErrorMessage(error.message); // Guardar el mensaje de error
-      setShowErrorModal(true); // Mostrar el modal de error
+      setErrorMessage(error.message);
+      setShowErrorModal(true);
     }
   };
 
   const handleModalAccept = () => {
-    setShowSuccessModal(false); // Cerrar el modal de éxito
-    window.location.href = "/login"; // Redirigir a la página de login
+    setShowSuccessModal(false);
+    window.location.href = "/login";
   };
 
   const handleErrorModalClose = () => {
-    setShowErrorModal(false); // Cerrar el modal de error
+    setShowErrorModal(false);
   };
 
   return (
-    <div className="w-full flex flex-col max-w-md md:max-w-xl md:h-auto p-7 md:p-9 space-y-4 md:space-y-6 bg-white rounded-lg shadow-md justify-center">
-      <h2 className="text-4xl font-bold text-start">Regístrate</h2>
-      <form className="space-y-1.5 md:space-y-2" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-2">
-          <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
+    <div className="w-full flex flex-col max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto p-6 md:p-8 lg:p-10 space-y-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-3xl lg:text-4xl font-bold text-start">Regístrate</h2>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-neutral-300 rounded p-2 relative">
             <label
               htmlFor="nombre"
-              className="text-sm md:text.base text-neutral-600"
+              className="text-sm lg:text-base text-neutral-600"
             >
               Nombre
             </label>
             <input
               type="text"
               name="nombre"
-              placeholder="Ingresa su nombre"
-              className="w-full bg-inherit text-sm md:text-base focus:outline-none focus:text-neutral-600 text-neutral-400"
+              placeholder="Ingresa tu nombre"
+              className="w-full bg-inherit focus:outline-none focus:text-neutral-600 text-neutral-400"
               value={formData.nombre}
               onChange={handleChange}
             />
           </div>
-          <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label htmlFor="apellido" className="text-neutral-600">
+          <div className="bg-neutral-300 rounded p-2 relative">
+            <label
+              htmlFor="apellido"
+              className="text-sm lg:text-base text-neutral-600"
+            >
               Apellido
             </label>
             <input
               name="apellido"
-              placeholder="Ingrese su apellido"
-              className="w-full bg-inherit text-sm md:text-base focus:outline-none focus:text-neutral-600 text-neutral-400"
+              placeholder="Ingresa tu apellido"
+              className="w-full bg-inherit focus:outline-none focus:text-neutral-600 text-neutral-400"
               value={formData.apellido}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-1.5 md:text-base md:gap-2">
-          <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label htmlFor="nickname" className="text-neutral-600">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-neutral-300 rounded p-2 relative">
+            <label
+              htmlFor="nickname"
+              className="text-sm lg:text-base text-neutral-600"
+            >
               Nombre de usuario
             </label>
             <input
               name="nickname"
-              placeholder="Ingrese su nombre de usuario"
-              className="w-full focus:outline-none focus:text-neutral-600 text-neutral-400 md:text-base text-sm bg-inherit"
+              placeholder="Ingresa tu nombre de usuario"
+              className="w-full bg-inherit focus:outline-none focus:text-neutral-600 text-neutral-400"
               value={formData.nickname}
               onChange={handleChange}
             />
           </div>
-          <div className="flex flex-col bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-            <label htmlFor="genero" className="text-neutral-600">
+          <div className="bg-neutral-300 rounded p-2 relative">
+            <label
+              htmlFor="genero_id"
+              className="text-sm lg:text-base text-neutral-600"
+            >
               Género
             </label>
             <select
               name="genero_id"
-              className="bg-inherit text-neutral-400 focus:outline-none focus:text-neutral-600 text-sm md:text-base -ml-1"
+              className="w-full bg-inherit focus:outline-none focus:text-neutral-600 text-neutral-400"
               value={formData.genero_id}
               onChange={handleChange}
               required
@@ -157,29 +160,35 @@ function RegisterForm() {
             </select>
           </div>
         </div>
-        <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-          <label htmlFor="email" className="text-neutral-600">
+        <div className="bg-neutral-300 rounded p-2 relative">
+          <label
+            htmlFor="email"
+            className="text-sm lg:text-base text-neutral-600"
+          >
             Email
           </label>
           <input
             name="email"
             placeholder="example.email@gmail.com"
             type="email"
-            className="w-full text-sm md:text-base focus:text-neutral-600 text-neutral-400 focus:outline-none bg-inherit"
+            className="w-full bg-inherit focus:outline-none focus:text-neutral-600 text-neutral-400"
             value={formData.email}
             onChange={handleChange}
           />
         </div>
-        <div className="bg-neutral-300 rounded p-1.5 md:p-2 relative text-sm md:text-base">
-          <label htmlFor="password" className="text-neutral-600">
-            password
+        <div className="bg-neutral-300 rounded p-2 relative">
+          <label
+            htmlFor="password"
+            className="text-sm lg:text-base text-neutral-600"
+          >
+            Password
           </label>
           <input
             name="password"
             placeholder="Introduce al menos 8+ caracteres"
             type="password"
             autoComplete="off"
-            className="bg-inherit w-full text-sm md:text-base focus:text-neutral-600 text-neutral-400 focus:outline-none"
+            className="w-full bg-inherit focus:outline-none focus:text-neutral-600 text-neutral-400"
             value={formData.password}
             onChange={handleChange}
           />
@@ -192,10 +201,9 @@ function RegisterForm() {
         </button>
       </form>
 
-      {/* Modal de confirmación de éxito */}
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md text-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center w-11/12 max-w-sm md:max-w-md lg:max-w-lg">
             <h3 className="text-2xl mb-4">Usuario creado correctamente</h3>
             <button
               onClick={handleModalAccept}
@@ -207,10 +215,9 @@ function RegisterForm() {
         </div>
       )}
 
-      {/* Modal de error */}
       {showErrorModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md text-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center w-11/12 max-w-sm md:max-w-md lg:max-w-lg">
             <h3 className="text-2xl mb-4 text-red-600">Error</h3>
             <p className="mb-4">{errorMessage}</p>
             <button
